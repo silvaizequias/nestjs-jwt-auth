@@ -4,6 +4,7 @@ import {
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -13,6 +14,7 @@ export class User extends BaseEntity {
   id: string;
 
   @Column({ name: 'username', type: 'varchar', length: 15 })
+  @Unique(['username'])
   username: string;
 
   @Column({ name: 'is_active', type: Boolean })

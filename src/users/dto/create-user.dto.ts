@@ -3,16 +3,14 @@ import {
   IsBoolean,
   IsNotEmpty,
   IsString,
-  MaxLength,
-  MinLength,
+  Length,
 } from 'class-validator';
 
 export class CreateUserDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @MinLength(5)
-  @MaxLength(15)
+  @Length(5, 15)
   readonly username: string;
 
   //@ApiProperty()
