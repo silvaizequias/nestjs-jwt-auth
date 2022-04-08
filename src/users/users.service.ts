@@ -1,4 +1,4 @@
-import { User } from './entities/user.entity';
+import { UsersEntity } from './entities/users.entity';
 import {
   Injectable,
   NotFoundException,
@@ -6,44 +6,68 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Repository } from 'typeorm';
+import {
+  FindConditions,
+  FindOneOptions,
+  Repository,
+} from 'typeorm';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User)
-    private readonly repository: Repository<User>,
+    @InjectRepository(UsersEntity)
+    private readonly userRepository: Repository<UsersEntity>,
   ) {}
 
-  create(createUserDto: CreateUserDto): Promise<User> {
-    const user = this.repository.create(createUserDto);
-    return this.repository.save(user);
+  create(
+    createUserDto: CreateUserDto,
+  ): Promise<UsersEntity> {
+    const user = this.userRepository.create(createUserDto);
+    return this.userRepository.save(user);
   }
 
-  findAll(): Promise<User[]> {
-    return this.repository.find();
+  async findAll(): Promise<UsersEntity[]> {
+    return await this.userRepository.find({
+      select: ['id', 'username', 'is_active'],
+    });
   }
 
-  findOne(id: string): Promise<User> {
-    return this.repository.findOne(id);
+  async findOne(id: string): Promise<UsersEntity> {
+    return await this.userRepository.findOne(id);
+  }
+
+  async findOneOurFail(
+    conditions: FindConditions<UsersEntity>,
+    options?: FindOneOptions<UsersEntity>,
+  ) {
+    try {
+      return await this.userRepository.findOneOrFail(
+        conditions,
+        options,
+      );
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 
   async update(
     id: string,
     updateUserDto: UpdateUserDto,
-  ): Promise<User> {
-    const user = await this.repository.preload({
+  ): Promise<UsersEntity> {
+    const user = await this.findOneOurFail({ id });
+    await this.userRepository.preload({
       id: id,
       ...updateUserDto,
     });
     if (!user) {
       throw new NotFoundException(`User ${id} not found`);
     }
-    return this.repository.save(user);
+    this.userRepository.merge(user, updateUserDto);
+    return this.userRepository.save(user);
   }
 
   async remove(id: string) {
-    const user = await this.findOne(id);
-    return this.repository.remove(user);
+    await this.userRepository.findOneOrFail({ id });
+    this.userRepository.softRemove({ id });
   }
 }

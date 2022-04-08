@@ -1,6 +1,7 @@
 import {
   BaseEntity,
   BeforeInsert,
+  BeforeUpdate,
   Column,
   CreateDateColumn,
   Entity,
@@ -8,9 +9,10 @@ import {
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
+import { hashSync } from 'bcrypt';
 
-@Entity()
-export class User extends BaseEntity {
+@Entity({ name: 'users' })
+export class UsersEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -22,8 +24,19 @@ export class User extends BaseEntity {
   @Unique(['username'])
   username: string;
 
-  @Column({ name: 'is_active', type: Boolean })
+  @Column({
+    name: 'is_active',
+    type: Boolean,
+    default: false,
+  })
   is_active: boolean;
+
+  @Column({
+    name: 'password',
+    type: 'varchar',
+    length: 100,
+  })
+  password: string;
 
   @Column({
     name: 'pass_token',
@@ -45,10 +58,23 @@ export class User extends BaseEntity {
   updated_at: Date;
 
   @BeforeInsert()
-  passTokenGenerator() {
+  generatorPassAndToken() {
     this.pass_token = Math.random()
       .toString(16)
       .substr(2, 8)
       .toUpperCase();
+
+    this.password = hashSync(this.password, 10);
+  }
+
+  @BeforeUpdate()
+  passTokenUpdateGenerator() {
+    if (this.is_active == false) {
+      this.pass_token = Math.random()
+        .toString(16)
+        .substr(2, 8)
+        .toUpperCase();
+    }
+    return this.pass_token;
   }
 }
