@@ -10,14 +10,8 @@ export class CreateUserDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @Length(5, 15)
+  @Length(6, 12)
   readonly username: string;
-
-  //@ApiProperty()
-  //@IsString()
-  //@IsNotEmpty()
-  //@Min(6)
-  //readonly password: string;
 
   @ApiProperty()
   @IsBoolean()
