@@ -3,11 +3,11 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   ParseUUIDPipe,
   UseGuards,
+  Put,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -16,9 +16,7 @@ import { AuthGuard } from '@nestjs/passport';
 
 @Controller('users')
 export class UsersController {
-  constructor(
-    private readonly usersService: UsersService,
-  ) {}
+  constructor(private usersService: UsersService) {}
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
@@ -38,7 +36,7 @@ export class UsersController {
     return await this.usersService.findOne(id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateUserDto: UpdateUserDto,
@@ -53,6 +51,6 @@ export class UsersController {
   async remove(
     @Param('id', new ParseUUIDPipe()) id: string,
   ) {
-    return await this.usersService.remove(id);
+    return await this.usersService.delete(id);
   }
 }

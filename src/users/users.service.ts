@@ -16,7 +16,7 @@ import {
 export class UsersService {
   constructor(
     @InjectRepository(UsersEntity)
-    private readonly userRepository: Repository<UsersEntity>,
+    private userRepository: Repository<UsersEntity>,
   ) {}
 
   create(
@@ -66,8 +66,11 @@ export class UsersService {
     return this.userRepository.save(user);
   }
 
-  async remove(id: string) {
-    await this.userRepository.findOneOrFail({ id });
-    this.userRepository.softRemove({ id });
+  async delete(id: string) {
+    const user = await this.findOneOurFail({ id });
+    if (!user) {
+      throw new NotFoundException(`User ${id} not found`);
+    }
+    return this.userRepository.delete({ id });
   }
 }

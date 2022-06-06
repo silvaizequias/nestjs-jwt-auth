@@ -10,8 +10,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(
     new ValidationPipe({
-    whitelist: true,
-    forbidNonWhitelisted: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
     }),
   );
 
@@ -27,7 +27,7 @@ async function bootstrap() {
     app,
     options,
   );
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('', app, document);
 
   await app.listen(3000);
   console.log(
