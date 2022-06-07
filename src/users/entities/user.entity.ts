@@ -1,5 +1,4 @@
 import {
-  BaseEntity,
   BeforeInsert,
   BeforeUpdate,
   Column,
@@ -12,7 +11,7 @@ import {
 import { hashSync } from 'bcrypt';
 
 @Entity({ name: 'users' })
-export class UserEntity extends BaseEntity {
+export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

@@ -1,4 +1,4 @@
-import { UserEntity } from './entities/user.entity';
+import { User } from './entities/user.entity';
 import {
   Injectable,
   NotFoundException,
@@ -15,30 +15,28 @@ import {
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
   ) {}
 
-  create(
-    createUserDto: CreateUserDto,
-  ): Promise<UserEntity> {
+  create(createUserDto: CreateUserDto): Promise<User> {
     const user = this.userRepository.create(createUserDto);
     return this.userRepository.save(user);
   }
 
-  async findAll(): Promise<UserEntity[]> {
+  async findAll(): Promise<User[]> {
     return await this.userRepository.find({
       select: ['id', 'username', 'is_active'],
     });
   }
 
-  async findOne(id: string): Promise<UserEntity> {
+  async findOne(id: string): Promise<User> {
     return await this.userRepository.findOne(id);
   }
 
   async findOneOurFail(
-    conditions: FindConditions<UserEntity>,
-    options?: FindOneOptions<UserEntity>,
+    conditions: FindConditions<User>,
+    options?: FindOneOptions<User>,
   ) {
     try {
       return await this.userRepository.findOneOrFail(
@@ -53,7 +51,7 @@ export class UsersService {
   async update(
     id: string,
     updateUserDto: UpdateUserDto,
-  ): Promise<UserEntity> {
+  ): Promise<User> {
     const user = await this.findOneOurFail({ id });
     await this.userRepository.preload({
       id: id,
