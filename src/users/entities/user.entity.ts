@@ -12,7 +12,7 @@ import {
 import { hashSync } from 'bcrypt';
 
 @Entity({ name: 'users' })
-export class UsersEntity extends BaseEntity {
+export class UserEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
