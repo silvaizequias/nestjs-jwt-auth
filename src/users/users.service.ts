@@ -1,3 +1,4 @@
+import { Account } from 'src/accounts/entities/account.entity';
 import { User } from './entities/user.entity';
 import {
   Injectable,
@@ -17,6 +18,8 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(Account)
+    private accountRepository: Repository<Account>,
   ) {}
 
   create(createUserDto: CreateUserDto): Promise<User> {
@@ -26,12 +29,14 @@ export class UsersService {
 
   async findAll(): Promise<User[]> {
     return await this.userRepository.find({
-      select: ['id', 'username', 'is_active'],
+      select: ['id', 'username', 'is_active', 'account'],
     });
   }
 
   async findOne(id: string): Promise<User> {
-    return await this.userRepository.findOne(id);
+    return await this.userRepository.findOne(id, {
+      relations: ['account'],
+    });
   }
 
   async findOneOurFail(

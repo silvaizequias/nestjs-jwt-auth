@@ -1,9 +1,11 @@
+import { Account } from './../../accounts/entities/account.entity';
 import {
   BeforeInsert,
   BeforeUpdate,
   Column,
   CreateDateColumn,
   Entity,
+  OneToOne,
   PrimaryGeneratedColumn,
   Unique,
   UpdateDateColumn,
@@ -14,6 +16,9 @@ import { hashSync } from 'bcrypt';
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @OneToOne(() => Account, account => account.user)
+  account: Account;
 
   @Column({
     name: 'username',

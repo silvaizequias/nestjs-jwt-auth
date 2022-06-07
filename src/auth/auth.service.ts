@@ -1,4 +1,4 @@
-import { UsersEntity } from '../users/entities/user.entity';
+import { User } from '../users/entities/user.entity';
 import { UsersService } from './../users/users.service';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -22,7 +22,7 @@ export class AuthService {
   }
 
   async validateUser(username: string, password: string) {
-    let user: UsersEntity;
+    let user: User;
     try {
       user = await this.usersService.findOneOurFail({
         username,
